@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Loader2, Download, Bell } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -128,10 +129,12 @@ export default function DashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => router.push('/report')}
+              asChild
               className="gap-1.5"
             >
-              <Download className="h-4 w-4" /> Report
+              <Link href="/report" prefetch={true}>
+                <Download className="h-4 w-4" /> Report
+              </Link>
             </Button>
           </div>
         </div>

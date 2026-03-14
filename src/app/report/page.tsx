@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getComplianceMap } from '@/lib/storage';
@@ -26,8 +27,10 @@ export default function ReportPage() {
   return (
     <div>
       <div className="print:hidden sticky top-0 z-10 flex items-center gap-3 bg-white border-b px-6 py-3">
-        <Button variant="ghost" size="sm" onClick={() => router.back()}>
-          <ArrowLeft className="mr-1 h-4 w-4" /> Back
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/dashboard" prefetch={true}>
+            <ArrowLeft className="mr-1 h-4 w-4" /> Back
+          </Link>
         </Button>
         <div className="flex-1" />
         <Button size="sm" onClick={() => window.print()} className="bg-brand-accent hover:bg-blue-600">
