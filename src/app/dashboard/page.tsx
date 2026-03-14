@@ -129,12 +129,10 @@ export default function DashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              asChild
+              render={<Link href="/report" prefetch={true} />}
               className="gap-1.5"
             >
-              <Link href="/report" prefetch={true}>
-                <Download className="h-4 w-4" /> Report
-              </Link>
+              <Download className="h-4 w-4" /> Report
             </Button>
           </div>
         </div>
