@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowRight, ArrowLeft, ChefHat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,8 @@ export function OnboardingForm() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => { router.prefetch('/dashboard'); }, [router]);
 
   const [form, setForm] = useState({
     businessName: '',
