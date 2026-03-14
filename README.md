@@ -1,2 +1,22 @@
-# AIEngine-Hackathon
-Bizcrew - An app for SME
+# AIEngine-Hackathon — RegBot
+
+RegBot: AI compliance agent for Scottish SMEs. Compliance made simple.
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+## Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Deploy on Vercel](https://vercel.com/new)
