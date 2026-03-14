@@ -127,7 +127,17 @@ ${Object.entries(VERIFIED_URLS).map(([k, v]) => `- ${k}: ${v.url}`).join('\n')}
 
 ## RULES
 - Today's date is ${new Date().toISOString().split('T')[0]}.
-- Calculate real deadlines based on today's date and the business profile dates.
+- Calculate REAL deadlines based on today's date and the business profile dates. Do NOT use placeholder or mock dates.
+- DEADLINE DATE RULES (critical — use actual UK regulatory calendars):
+  - VAT quarterly deadlines: 7 May (Q1 Jan-Mar), 7 Aug (Q2 Apr-Jun), 7 Nov (Q3 Jul-Sep), 7 Feb (Q4 Oct-Dec). Pick the NEXT upcoming quarter from today.
+  - PAYE RTI: Due on or before each payday. Use the 5th of the next month as representative deadline.
+  - Corporation Tax payment: Due 9 months + 1 day after financial year end. Corporation Tax RETURN: Due 12 months after financial year end.
+  - Annual Accounts (Companies House): Due 9 months after financial year end for private companies.
+  - Confirmation Statement: Due on the anniversary of incorporation + 14 days. If incorporationDate is provided, calculate from that.
+  - Self Assessment: Online deadline is 31 January following the end of the tax year (5 April).
+  - ICO Registration: Annual renewal — if icoRegistrationDate is not given, use 12 months from today.
+  - Premises Licence Fee: Annual — if licenceGrantDate is given, due on that anniversary.
+  - Financial year end: If the user specified a financialYearEnd, use it. Otherwise, the UK standard tax year ends 5 April. For limited companies, the default FYE is the last day of the month of incorporation anniversary (e.g., incorporated June 15 → FYE is 30 June each year).
 - severity: overdue = past due, urgent = 0-7 days, warning = 8-30 days, safe = 30+ days.
 - Include ALL obligations that apply to this specific food business.
 - Always include Food Standards Scotland obligations (food hygiene, allergens, HACCP).

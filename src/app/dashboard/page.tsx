@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, Download, Bell } from 'lucide-react';
+import { Download, Bell, Shield, Search, FileCheck, BookOpen, Scale } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
@@ -17,12 +17,21 @@ import { getProfile, getComplianceMap, saveComplianceMap } from '@/lib/storage';
 import { FALLBACK_COMPLIANCE_MAP } from '@/lib/fallback';
 import type { ComplianceMap as ComplianceMapType, RegulationChange } from '@/lib/types';
 
+const LOADING_STEPS = [
+  { icon: Search, text: 'Analysing your business profile...' },
+  { icon: BookOpen, text: 'Checking HMRC, Companies House & FSS regulations...' },
+  { icon: Scale, text: 'Mapping Scottish licensing obligations...' },
+  { icon: FileCheck, text: 'Calculating real deadlines & penalties...' },
+  { icon: Shield, text: 'Building your compliance dashboard...' },
+];
+
 export default function DashboardPage() {
   const router = useRouter();
   const [data, setData] = useState<ComplianceMapType | null>(null);
   const [loading, setLoading] = useState(true);
   const [regChanges, setRegChanges] = useState<RegulationChange[]>([]);
   const [showReminders, setShowReminders] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
 
   useEffect(() => {
     const profile = getProfile();
@@ -38,6 +47,11 @@ export default function DashboardPage() {
       fetchMonitor(profile);
       return;
     }
+
+    // Animate through loading steps
+    const stepInterval = setInterval(() => {
+      setLoadingStep(prev => (prev < LOADING_STEPS.length - 1 ? prev + 1 : prev));
+    }, 3000);
 
     const generate = async () => {
       try {
@@ -56,6 +70,7 @@ export default function DashboardPage() {
         saveComplianceMap(fallback);
         setData(fallback);
       } finally {
+        clearInterval(stepInterval);
         setLoading(false);
       }
     };
@@ -82,11 +97,78 @@ export default function DashboardPage() {
   };
 
   if (loading) {
+    const CurrentIcon = LOADING_STEPS[loadingStep].icon;
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
-          <p className="text-text-secondary">Generating your compliance map...</p>
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-surface-secondary">
+        <div className="mx-4 w-full max-w-md">
+          {/* Animated card */}
+          <div className="rounded-2xl border border-brand-border/60 bg-white p-8 shadow-lg">
+            {/* Pulsing shield */}
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand-accent/10">
+              <div className="relative">
+                <div className="absolute inset-0 animate-ping rounded-full bg-brand-accent/20" />
+                <Shield className="relative h-10 w-10 text-brand-accent" />
+              </div>
+            </div>
+
+            <h2 className="text-center text-xl font-bold text-brand-dark mb-2">
+              Building your compliance map
+            </h2>
+            <p className="text-center text-sm text-brand-light mb-8">
+              Our AI is checking every regulation that applies to your business
+            </p>
+
+            {/* Step progress */}
+            <div className="space-y-3">
+              {LOADING_STEPS.map((step, i) => {
+                const StepIcon = step.icon;
+                const isActive = i === loadingStep;
+                const isDone = i < loadingStep;
+
+                return (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-3 rounded-lg px-4 py-2.5 transition-all duration-500 ${
+                      isActive
+                        ? 'bg-brand-accent/10 border border-brand-accent/30'
+                        : isDone
+                        ? 'bg-deadline-safe/5 border border-transparent'
+                        : 'border border-transparent opacity-40'
+                    }`}
+                  >
+                    <div className={`shrink-0 ${isActive ? 'animate-pulse' : ''}`}>
+                      <StepIcon className={`h-4 w-4 ${
+                        isActive ? 'text-brand-accent' : isDone ? 'text-deadline-safe' : 'text-brand-light'
+                      }`} />
+                    </div>
+                    <span className={`text-sm ${
+                      isActive ? 'font-medium text-brand-dark' : isDone ? 'text-deadline-safe' : 'text-brand-light'
+                    }`}>
+                      {step.text}
+                    </span>
+                    {isDone && (
+                      <span className="ml-auto text-xs text-deadline-safe font-medium">Done</span>
+                    )}
+                    {isActive && (
+                      <div className="ml-auto flex gap-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-bounce [animation-delay:0ms]" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-bounce [animation-delay:150ms]" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-bounce [animation-delay:300ms]" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Progress bar */}
+            <div className="mt-6 h-1.5 rounded-full bg-brand-ghost overflow-hidden">
+              <div
+                className="h-full rounded-full bg-brand-accent transition-all duration-1000 ease-out"
+                style={{ width: `${((loadingStep + 1) / LOADING_STEPS.length) * 100}%` }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -160,9 +242,9 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Tabs */}
+        {/* Tabs — full width */}
         <Tabs defaultValue="deadlines">
-          <TabsList className="mb-4">
+          <TabsList className="mb-4 w-full grid grid-cols-4">
             <TabsTrigger value="deadlines">Deadlines</TabsTrigger>
             <TabsTrigger value="map">Compliance Map</TabsTrigger>
             <TabsTrigger value="chat">Ask RegBot</TabsTrigger>

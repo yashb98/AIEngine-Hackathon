@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
+import { FloatingChat } from '@/components/FloatingChat';
 import './globals.css';
 
 const inter = Inter({
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <Navbar />
         <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+        <FloatingChat />
       </body>
     </html>
   );
