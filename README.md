@@ -6,6 +6,21 @@
 
 ---
 
+## Description of AI Agent
+
+RegBot is an AI-powered compliance agent that acts as a knowledgeable, always-available business advisor for Scottish SMEs. It knows exactly which regulations apply to your specific business, keeps track of your deadlines, explains changes in plain English, and answers compliance questions on demand.
+
+**What the agent does:**
+
+- **Profile-based mapping** — From your business profile (type, sector, location, employees, VAT status, etc.), RegBot generates a personalised compliance map of every regulation, licence, and filing that applies to you.
+- **Deadline tracking** — Builds a calendar of upcoming deadlines (VAT, Companies House, licences, PAYE) with severity indicators and penalty amounts.
+- **Compliance Q&A** — Chat interface where you ask questions like "Do I need an alcohol licence for a private event?" or "What are the allergen display rules for takeaway?" and get accurate, Scotland-specific answers with sources.
+- **Scottish-first** — Understands Scottish Licensing Act 2005, Food Standards Scotland, LBTT, Scottish Income Tax, and council-specific requirements — not generic UK advice.
+
+The agent is powered by OpenAI-GPT.5.2 and uses your business profile as context for every response, so answers are tailored to your situation.
+
+---
+
 ## The Problem
 
 Scottish SMEs are drowning in regulatory admin. Different deadlines, different portals, different penalties:
@@ -26,6 +41,7 @@ RegBot maps every obligation to your business, tracks every deadline, and answer
 | **Onboarding** | Smart form that builds your business profile → generates a personalised compliance map |
 | **Dashboard** | Deadline tracker, compliance map, and risk score at a glance |
 | **AI Chat** | Ask RegBot anything — VAT deadlines, Scottish licensing law, food hygiene, penalties — with sourced, Scotland-specific answers |
+| **Email Reminders** | Checks every day at 9am and sends you an email if you have an upcoming deadline — choose which deadlines to track and when (30, 14, 7, or 2 days before) |
 
 ### Scottish-First
 
@@ -34,14 +50,18 @@ RegBot maps every obligation to your business, tracks every deadline, and answer
 - Council-specific obligations (Edinburgh, Glasgow, etc.)
 - Real penalty amounts — never vague “a fine”
 
+### In Progress
+
+- **Browser-use / Browser Agent** — We are integrating [browser-use](https://github.com/browser-use/browser-use) and browser-agent to automatically fill government forms (VAT returns, Companies House filings, licence renewals) for you. The guided filing flow and agent UI are in place, but the full auto-fill integration is not finished yet.
+
 ---
 
 ## Tech Stack
 
 - **Framework:** Next.js 15 (App Router) + TypeScript
 - **Styling:** Tailwind CSS + shadcn/ui
-- **AI:** Claude (Anthropic) via Vercel AI SDK
-- **Storage:** localStorage (hackathon MVP; upgrade to Vercel KV for production)
+- **AI:** GPT 5.2 by OpenAI
+- **Storage:** localStorage
 
 ---
 
@@ -50,7 +70,7 @@ RegBot maps every obligation to your business, tracks every deadline, and answer
 ### Prerequisites
 
 - Node.js 18+
-- [Anthropic API key](https://console.anthropic.com/)
+- OpenAI API Key
 
 ### Setup
 
@@ -66,7 +86,7 @@ RegBot maps every obligation to your business, tracks every deadline, and answer
    Create `.env.local` in the project root:
 
    ```bash
-   ANTHROPIC_API_KEY=sk-ant-...
+   OPENAI_API_KEY=sk-...
    ```
 
 3. **Run the dev server**
@@ -99,23 +119,13 @@ regbot/
 
 ## Demo Scenario
 
-For a quick demo, use **Sarah's Café** — a limited company in Edinburgh serving food and alcohol. This profile triggers the full range of obligations: HMRC, Companies House, council, employment, Scottish licensing, and data protection.
-
----
-
-## Deploy on Vercel
-
-1. Push to GitHub
-2. [Import the project on Vercel](https://vercel.com/new)
-3. Add `ANTHROPIC_API_KEY` in Environment Variables
-4. Deploy
+For a quick demo, use **Istanbul Kebap** — a limited company in Edinburgh serving food and alcohol. This profile triggers the full range of obligations: HMRC, Companies House, council, employment, Scottish licensing, and data protection.
 
 ---
 
 ## License
 
 MIT
-
 ---
 
 *Built for AI Engine Hackathon — Edinburgh, March 2026*
