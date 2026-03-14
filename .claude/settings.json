@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git push:*)",
+      "Bash(npx next:*)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(git pull:*)",
+      "Bash(curl -s -X POST http://localhost:3000/api/send-email -H \"Content-Type: application/json\" -d '{\"\"email\"\":\"\"test@test.com\"\",\"\"deadlines\"\":[],\"\"businessName\"\":\"\"Test\"\"}')",
+      "Bash(git add:*)"
+    ]
+  }
+}
