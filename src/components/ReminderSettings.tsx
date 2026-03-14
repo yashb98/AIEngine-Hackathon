@@ -50,7 +50,6 @@ export function ReminderSettings({ deadlines, onClose }: ReminderSettingsProps) 
     if (!email.trim()) return;
     setSaveStatus('saving');
 
-    // Auto-select ALL deadlines — no user selection needed
     const allDeadlineIds = deadlines.map(d => d.id);
     const prefs: ReminderPreferences = {
       ...DEFAULT_PREFS,
@@ -82,13 +81,11 @@ export function ReminderSettings({ deadlines, onClose }: ReminderSettingsProps) 
           setTimeout(() => setSaveStatus('idle'), 4000);
           return;
         }
-        console.error('Email API error:', await res.json().catch(() => ({})));
         saveReminderPrefs(prefs);
         setSaveStatus('email-error');
         setTimeout(() => setSaveStatus('idle'), 4000);
         return;
-      } catch (e) {
-        console.error('Failed to send email:', e);
+      } catch {
         saveReminderPrefs(prefs);
         setSaveStatus('email-error');
         setTimeout(() => setSaveStatus('idle'), 4000);
@@ -101,11 +98,6 @@ export function ReminderSettings({ deadlines, onClose }: ReminderSettingsProps) 
     setTimeout(() => setSaveStatus('idle'), 2000);
   };
 
-  const urgentDeadlines = deadlines
-    .filter(d => d.dueDate)
-    .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime())
-    .slice(0, 5);
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/30" onClick={onClose}>
       <div
@@ -114,39 +106,29 @@ export function ReminderSettings({ deadlines, onClose }: ReminderSettingsProps) 
       >
         <div className="sticky top-0 z-10 flex items-center gap-2 border-b bg-white px-5 py-4">
           <Bell className="h-5 w-5 text-brand-accent" />
-          <h2 className="text-lg font-bold text-text-primary">Daily Compliance Digest</h2>
+          <h2 className="text-lg font-bold text-text-primary">Daily Reminders</h2>
           <div className="flex-1" />
           <Button variant="ghost" size="sm" onClick={onClose}>✕</Button>
         </div>
 
         <div className="space-y-6 p-5">
-          {/* Explanation */}
-          <div className="rounded-xl bg-brand-ghost p-4">
-            <h3 className="text-sm font-semibold text-brand-dark mb-2">How it works</h3>
-            <ul className="space-y-2 text-sm text-brand-light">
-              <li className="flex items-start gap-2">
-                <span className="mt-0.5 text-brand-accent">•</span>
-                Every morning at <strong className="text-brand-dark">8:00 AM</strong>, our AI checks all your compliance deadlines
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-0.5 text-brand-accent">•</span>
-                You receive an email with <strong className="text-brand-dark">every licence & filing</strong> that needs attention
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-0.5 text-brand-accent">•</span>
-                Each deadline includes its <strong className="text-brand-dark">due date, penalty, and direct link</strong> to file
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-0.5 text-brand-accent">•</span>
-                No setup, no selection — <strong className="text-brand-dark">everything is covered automatically</strong>
-              </li>
-            </ul>
-          </div>
+          {/* Already active */}
+          {previousEmail && (
+            <div className="flex items-center gap-2 rounded-lg bg-deadline-safe/10 border border-deadline-safe/30 px-4 py-3">
+              <CheckCircle2 className="h-5 w-5 text-deadline-safe shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-brand-dark">Reminders active</p>
+                <p className="text-xs text-brand-light">
+                  You&apos;ll receive daily compliance reminders at <strong>{previousEmail}</strong> every morning.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Email input */}
           <div>
             <Label className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold">
-              <Mail className="h-4 w-4" /> Your Email Address
+              <Mail className="h-4 w-4" /> {previousEmail ? 'Update email' : 'Enter your email'}
             </Label>
             <Input
               type="email"
@@ -154,64 +136,14 @@ export function ReminderSettings({ deadlines, onClose }: ReminderSettingsProps) 
               value={email}
               onChange={e => setEmail(e.target.value)}
             />
-            {previousEmail && (
-              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-deadline-safe">
-                <CheckCircle2 className="h-3 w-3" />
-                Active: {previousEmail} — receiving daily digests
-              </p>
-            )}
           </div>
-
-          {/* Preview of upcoming deadlines */}
-          {urgentDeadlines.length > 0 && (
-            <div>
-              <Label className="mb-2 text-sm font-semibold">Next deadlines you&apos;ll be notified about</Label>
-              <div className="space-y-2">
-                {urgentDeadlines.map(d => {
-                  const daysUntil = d.dueDate
-                    ? Math.ceil((new Date(d.dueDate).getTime() - Date.now()) / 86400000)
-                    : null;
-                  const dateLabel = d.dueDate
-                    ? new Date(d.dueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-                    : 'Ongoing';
-
-                  return (
-                    <div key={d.id} className="flex items-center justify-between rounded-lg border border-brand-border/60 px-3 py-2.5">
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-text-primary truncate">{d.title}</p>
-                        <p className="text-xs text-text-secondary">{dateLabel}</p>
-                      </div>
-                      {daysUntil !== null && (
-                        <span className={`shrink-0 ml-2 rounded-full px-2 py-0.5 text-xs font-semibold ${
-                          daysUntil < 0
-                            ? 'bg-deadline-overdue/10 text-deadline-overdue'
-                            : daysUntil <= 7
-                            ? 'bg-deadline-urgent/10 text-deadline-urgent'
-                            : daysUntil <= 30
-                            ? 'bg-deadline-warning/10 text-deadline-warning'
-                            : 'bg-deadline-safe/10 text-deadline-safe'
-                        }`}>
-                          {daysUntil < 0 ? `${Math.abs(daysUntil)}d overdue` : daysUntil === 0 ? 'Today' : `${daysUntil}d`}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
-                {deadlines.length > 5 && (
-                  <p className="text-xs text-text-secondary text-center">
-                    + {deadlines.length - 5} more deadlines tracked automatically
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Status messages */}
           {saveStatus === 'email-sent' && (
             <div className="flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-3 py-2.5">
               <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-              <p className="text-xs text-green-800">
-                Digest activated! Confirmation sent to <strong>{email}</strong>. You&apos;ll receive daily updates at 8:00 AM.
+              <p className="text-sm text-green-800">
+                You&apos;ve been added for daily reminders. You&apos;ll get an email every single day with all your deadlines.
               </p>
             </div>
           )}
@@ -220,7 +152,7 @@ export function ReminderSettings({ deadlines, onClose }: ReminderSettingsProps) 
             <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2.5">
               <XCircle className="h-4 w-4 text-red-500 shrink-0" />
               <p className="text-xs text-red-700">
-                Preferences saved, but the confirmation email could not be sent. Check that RESEND_API_KEY is configured.
+                Saved, but confirmation email failed. Check RESEND_API_KEY.
               </p>
             </div>
           )}
@@ -236,20 +168,18 @@ export function ReminderSettings({ deadlines, onClose }: ReminderSettingsProps) 
             {saveStatus === 'email-sent' && <Send className="mr-1.5 h-4 w-4" />}
             {saveStatus === 'idle' && <Save className="mr-1.5 h-4 w-4" />}
             {saveStatus === 'saving'
-              ? 'Activating daily digest...'
+              ? 'Activating...'
               : saveStatus === 'saved'
               ? 'Saved!'
               : saveStatus === 'email-sent'
-              ? 'Digest Activated!'
-              : !previousEmail
-              ? 'Activate Daily Digest'
-              : email.trim() !== previousEmail
-              ? 'Update Email & Reactivate'
-              : 'Save'}
+              ? 'Done!'
+              : previousEmail
+              ? 'Update Email'
+              : 'Activate Daily Reminders'}
           </Button>
 
-          <p className="text-[11px] text-center text-text-secondary">
-            All {deadlines.length} compliance deadlines are monitored automatically. No selection needed.
+          <p className="text-xs text-center text-text-secondary">
+            All {deadlines.length} deadlines are tracked. You&apos;ll get reminders every single day.
           </p>
         </div>
       </div>

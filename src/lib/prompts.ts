@@ -138,7 +138,8 @@ ${Object.entries(VERIFIED_URLS).map(([k, v]) => `- ${k}: ${v.url}`).join('\n')}
   - ICO Registration: Annual renewal — if icoRegistrationDate is not given, use 12 months from today.
   - Premises Licence Fee: Annual — if licenceGrantDate is given, due on that anniversary.
   - Financial year end: If the user specified a financialYearEnd, use it. Otherwise, the UK standard tax year ends 5 April. For limited companies, the default FYE is the last day of the month of incorporation anniversary (e.g., incorporated June 15 → FYE is 30 June each year).
-- severity: overdue = past due, urgent = 0-7 days, warning = 8-30 days, safe = 30+ days.
+- CRITICAL: Every obligation MUST have a corresponding deadline entry. The number of deadlines must match or exceed the number of obligations. For ongoing obligations (food hygiene, HACCP, allergens, ELI, etc.) use dueDate: null but still create a deadline entry with the action required.
+- severity: overdue = past due, urgent = 0-7 days, warning = 8-30 days, safe = 30+ days. For ongoing items with no dueDate, use severity "warning".
 - Include ALL obligations that apply to this specific food business.
 - Always include Food Standards Scotland obligations (food hygiene, allergens, HACCP).
 - For Scottish businesses, always include Scotland-specific obligations.
