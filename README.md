@@ -60,7 +60,7 @@ RegBot maps every obligation to your business, tracks every deadline, and answer
 
 - **Framework:** Next.js 15 (App Router) + TypeScript
 - **Styling:** Tailwind CSS + shadcn/ui
-- **AI:** GPT 5.2(OpenAI)
+- **AI:** GPT 5.2 by OpenAI
 - **Storage:** localStorage
 
 ---
@@ -126,7 +126,6 @@ For a quick demo, use **Istanbul Kebap** — a limited company in Edinburgh serv
 ## License
 
 MIT
-
 ---
 
 *Built for AI Engine Hackathon — Edinburgh, March 2026*
