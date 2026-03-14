@@ -27,13 +27,9 @@ export default function ReportPage() {
   return (
     <div>
       <div className="print:hidden sticky top-0 z-10 flex items-center gap-3 bg-white border-b px-6 py-3">
-        <Link
-          href="/dashboard"
-          prefetch={true}
-          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-sm font-medium hover:bg-muted transition"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back
-        </Link>
+        <Button variant="ghost" size="sm" render={<Link href="/dashboard" prefetch={true} />}>
+          <ArrowLeft className="mr-1 h-4 w-4" /> Back
+        </Button>
         <div className="flex-1" />
         <Button size="sm" onClick={() => window.print()} className="bg-brand-accent hover:bg-blue-600">
           <Printer className="mr-1 h-4 w-4" /> Print / Save PDF

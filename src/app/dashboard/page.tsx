@@ -208,13 +208,14 @@ export default function DashboardPage() {
             >
               <Bell className="h-4 w-4" /> Reminders
             </Button>
-            <Link
-              href="/report"
-              prefetch={true}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-1 text-sm font-medium hover:bg-muted transition"
+            <Button
+              variant="outline"
+              size="sm"
+              render={<Link href="/report" prefetch={true} />}
+              className="gap-1.5"
             >
               <Download className="h-4 w-4" /> Report
-            </Link>
+            </Button>
           </div>
         </div>
 
